@@ -63,7 +63,7 @@ def hello_world():
     )
     return "My secret value is {}".format(secret.value)
 
-@app.route('/')
+@app.route('/ping')
 def ping():
     return "Hello world"
 
