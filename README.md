@@ -32,7 +32,7 @@ Use the "Deploy to Azure" button to deploy an ARM template to create the followi
 
 Review the resources created using the Azure portal. You should see an App Service and a Key Vault. View the access policies of the Key Vault to see that the App Service has access to it. 
 
->You CANNOT use the default Python version shipped with Azure WebApp to execute Awure SDK for Python code. You must install a WebApp extension for Python.
+>You CANNOT use the default Python version shipped with Azure WebApp to execute Azure SDK for Python code. You must install a WebApp extension for Python.
  This tutorial explains [how to update Python using an extension on Azure WebApp](https://docs.microsoft.com/visualstudio/python/managing-python-on-azure-app-service).
  The sample here works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
 
@@ -83,9 +83,9 @@ and grant it the same access.
     pip install -r requirements.txt
     ```
 
-3.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL of replace the variable in the example.
+3.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL of replace the variable in the example file.
 
-1. Export these environment variables into your current shell. 
+1. Export these environment variables into your current shell or update the credentials in the example file.
 
     ```
     export AZURE_TENANT_ID={your tenant id}
@@ -101,7 +101,7 @@ and grant it the same access.
 
 1. This sample exposes two endpoints:
   
-   - `/ping` : This just answers hello world and is a good way to test if your packages are installed correctly without testing Azure itself.
+   - `/ping` : This just answers "hello world" and is a good way to test if your packages are installed correctly without testing Azure itself.
    - `/` : The MSI sample itself
 
 ## Installation on Azure
@@ -133,7 +133,7 @@ Using the `MSIAuthentication` class will autodetect if you're on a WebApp and ge
     )
 ```
 
-If you want to execute this same code in your local environment machine, just replace the MSIAuthentication class with ServicePrincipalCredentials or any credentials class available for Python. 
+If you want to execute this same code in your local environment machine, just replace the `MSIAuthentication` class with `ServicePrincipalCredentials` or any credentials class available for Python. 
 An overview of credentials features is available here: [https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate](https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate)
 
 If you need a fallback mechanism to allow this code to switch automatically from MSI to another approach, you can test for environment variables:
@@ -159,7 +159,7 @@ As a result, you did not have to explicitly handle a service principal credentia
 
 ## Azure Functions
 
-Azure Functions being powered by Azure WebApp, MSI is also available.
+Azure Functions being powered by Azure WebApp, MSI is also available. Just copy the content of `run_example` into your Azure Functions with the right import.
 
 ## Troubleshooting
 
