@@ -63,5 +63,9 @@ def hello_world():
     )
     return "My secret value is {}".format(secret.value)
 
+@app.route('/')
+def ping():
+    return "Hello world"
+
 if __name__ == '__main__':
   app.run()
