@@ -40,28 +40,15 @@ def run_example():
         "secret",       # Name of your secret. If you followed the README 'secret' should exists
         ""              # The version of the secret. Empty string for latest
     )
-    print("My secret value: {}".format(secret.value))
-    print("Expires: {}".format(secret.attributes.expires))
+    return "My secret value is {}".format(secret.value)
 
 
 @app.route('/')
 def hello_world():
-    # Get credentials
-    credentials = get_key_vault_credentials()
-
-    # Create a KeyVault client
-    key_vault_client = KeyVaultClient(
-        credentials
-    )
-
-    key_vault_uri = os.environ.get("KEY_VAULT_URI", KEY_VAULT_URI)
-
-    secret = key_vault_client.get_secret(
-        key_vault_uri,  # Your KeyVault URL
-        "secret",       # Name of your secret. If you followed the README 'secret' should exists
-        ""              # The version of the secret. Empty string for latest
-    )
-    return "My secret value is {}".format(secret.value)
+    try:
+        return run_example()
+    except Exception as err:
+        return str(err)
 
 @app.route('/ping')
 def ping():
