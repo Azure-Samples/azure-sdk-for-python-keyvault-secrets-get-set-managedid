@@ -32,9 +32,9 @@ Use the "Deploy to Azure" button to deploy an ARM template to create the followi
 
 Review the resources created using the Azure portal. You should see an App Service and a Key Vault. View the access policies of the Key Vault to see that the App Service has access to it. 
 
->This sample CANNOT use the default Python version shipped with Azure WebApp. You must install a Python extension in order to execute. 
+>You CANNOT use the default Python version shipped with Azure WebApp to execute Awure SDK for Python code. You must install a WebApp extension for Python.
  This tutorial explains [how to update Python using an extension on Azure WebApp](https://docs.microsoft.com/visualstudio/python/managing-python-on-azure-app-service).
- This sample works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
+ The sample here works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
 
 ### Step 2: Grant yourself data plane access to the Key Vault
 Using the Azure Portal, go to the Key Vault's access policies, and grant yourself **Secret Management** access to the Key Vault. This will allow you to run the application on your local development machine. 
@@ -44,6 +44,12 @@ Using the Azure Portal, go to the Key Vault's access policies, and grant yoursel
 3.	Click on "Add New", select "Secret Management" from the dropdown for "Configure from template"
 4.	Click on "Select Principal", add your account 
 5.	Save the Access Policies
+
+You can also create an Azure service principal either through
+[Azure CLI](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal-cli/),
+[PowerShell](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal/)
+or [the portal](https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/)
+and grant it the same access.
 
 
 ## Local dev installation
@@ -78,11 +84,6 @@ Using the Azure Portal, go to the Key Vault's access policies, and grant yoursel
     ```
 
 3.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL of replace the variable in the example.
-
-1. Create an Azure service principal either through
-[Azure CLI](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal-cli/),
-[PowerShell](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal/)
-or [the portal](https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/).
 
 1. Export these environment variables into your current shell. 
 
@@ -135,7 +136,7 @@ Using the `MSIAuthentication` class will autodetect if you're on a WebApp and ge
 If you want to execute this same code in your local environment machine, just replace the MSIAuthentication class with ServicePrincipalCredentials or any credentials class available for Python. 
 An overview of credentials features is available here: [https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate](https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate)
 
-If you need a fallback mechanism to allow ths code to switch automatically from MSI to loading an auth file (as described in the previous link).
+If you need a fallback mechanism to allow this code to switch automatically from MSI to another approach, you can test for environment variables:
 
 ```python
 if "APPSETTING_WEBSITE_SITE_NAME" in os.environ:
@@ -146,14 +147,19 @@ else:
     return ServicePrincipalCredentials(
         client_id=os.environ['AZURE_CLIENT_ID'],
         secret=os.environ['AZURE_CLIENT_SECRET'],
-        tenant=os.environ['AZURE_TENANT_ID']
+        tenant=os.environ['AZURE_TENANT_ID'],
+        resource='https://vault.azure.net'
     )
 ```
 
 ## Summary
 
 The web app was successfully able to get a secret at runtime from Azure Key Vault using your developer account during development, and using MSI when deployed to Azure, without any code change between local development environment and Azure. 
-As a result, you did not have to explicitly handle a service principal credential to authenticate to Azure AD to get a token to call Key Vault. You do not have to worry about renewing the service principal credential either, since MSI takes care of that.  
+As a result, you did not have to explicitly handle a service principal credential to authenticate to Azure AD to get a token to call Key Vault. You do not have to worry about renewing the service principal credential either, since MSI takes care of that.
+
+## Azure Functions
+
+Azure Functions being powered by Azure WebApp, MSI is also available.
 
 ## Troubleshooting
 
@@ -161,7 +167,7 @@ As a result, you did not have to explicitly handle a service principal credentia
 
 1. MSI is not setup on the App Service. 
 
-Check the environment variables MSI_ENDPOINT and MSI_SECRET exist using [Kudu debug console](https://azure.microsoft.com/en-us/resources/videos/super-secret-kudu-debug-console-for-azure-web-sites/). If these environment variables do not exist, MSI is not enabled on the App Service. 
+Check the environment variables MSI_ENDPOINT and MSI_SECRET exist using [Kudu debug console](https://azure.microsoft.com/en-us/resources/videos/super-secret-kudu-debug-console-for-azure-web-sites/). If these environment variables do not exist, MSI is not enabled on the App Service. Note that after enabling MSI, you need to restart your WebApp.
 
 ### Common issues across environments:
 

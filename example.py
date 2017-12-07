@@ -19,7 +19,8 @@ def get_key_vault_credentials():
         return ServicePrincipalCredentials(
             client_id=os.environ['AZURE_CLIENT_ID'],
             secret=os.environ['AZURE_CLIENT_SECRET'],
-            tenant=os.environ['AZURE_TENANT_ID']
+            tenant=os.environ['AZURE_TENANT_ID'],
+            resource='https://vault.azure.net'
         )
 
 def run_example():
