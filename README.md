@@ -32,6 +32,8 @@ Use the "Deploy to Azure" button to deploy an ARM template to create the followi
 
 Review the resources created using the Azure portal. You should see an App Service and a Key Vault. View the access policies of the Key Vault to see that the App Service has access to it. 
 
+**IMPORTANT NOTE:**
+
 >You CANNOT use the default Python version shipped with Azure WebApp to execute Azure SDK for Python code. You must install a WebApp extension for Python.
  This tutorial explains [how to update Python using an extension on Azure WebApp](https://docs.microsoft.com/visualstudio/python/managing-python-on-azure-app-service).
  The sample here works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
@@ -108,9 +110,15 @@ and grant it the same access.
 
 1. Set the `KEY_VAULT_URL` environment variable using the "Application Settings" of your WebApp.
 
-2. This repo is ready to be deployed using local git. Read this tutorial to get more information on [how to push using local git with CLI 2.0](https://docs.microsoft.com/azure/app-service/app-service-web-get-started-python#push-to-azure-from-git)
+1. Connect to the [Kudu console](https://github.com/projectkudu/kudu/wiki/Kudu-console) and install the dependencies. If you installed the Python 3.6.2x86 extension, the command line will be:
 
-> The "Application Settings" should show Python version as "off" since your are using an extension. Change it to off to save resources.
+```shell
+D:\home\python362x86\python.exe -m pip install -r D:\home\site\wwwroot\requirements.txt
+```
+
+> For automation purpose, you might use the [Kudu RestAPI](https://github.com/projectkudu/kudu/wiki/REST-API#command)
+
+3. This repo is ready to be deployed using local git. Read this tutorial to get more information on [how to push using local git with CLI 2.0](https://docs.microsoft.com/azure/app-service/app-service-web-get-started-python#push-to-azure-from-git)
 
 ## At a glance
 
@@ -164,6 +172,11 @@ Azure Functions being powered by Azure WebApp, MSI is also available. Just copy 
 ## Troubleshooting
 
 ### Common issues when deployed to Azure App Service:
+
+1. I see "The page cannot be displayed because an internal server error has occurred.", even on the "ping" endpoint
+
+Make sure you have installed a Python extension for WebApp (see Step 1). If not, this tutorial explains [how to update Python using an extension on Azure WebApp](https://docs.microsoft.com/visualstudio/python/managing-python-on-azure-app-service).
+ The sample here works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
 
 1. MSI is not setup on the App Service. 
 
