@@ -1,12 +1,13 @@
+from msrestazure.azure_active_directory import MSIAuthentication, ServicePrincipalCredentials
+from azure.keyvault import KeyVaultClient
 import os
 
 from flask import Flask
 app = Flask(__name__)
 
-from azure.keyvault import KeyVaultClient
-from msrestazure.azure_active_directory import MSIAuthentication, ServicePrincipalCredentials
 
-KEY_VAULT_URI = None # Replace by something like "https://xxxxxxxxx.vault.azure.net/"
+KEY_VAULT_URI = None  # Replace by something like "https://xxxxxxxxx.vault.azure.net/"
+
 
 def get_key_vault_credentials():
     """This tries to get a token using MSI, or fallback to SP env variables.
@@ -22,6 +23,7 @@ def get_key_vault_credentials():
             tenant=os.environ['AZURE_TENANT_ID'],
             resource='https://vault.azure.net'
         )
+
 
 def run_example():
     """MSI Authentication example."""
@@ -51,9 +53,11 @@ def hello_world():
     except Exception as err:
         return str(err)
 
+
 @app.route('/ping')
 def ping():
     return "Hello world"
 
+
 if __name__ == '__main__':
-  app.run()
+    app.run()
