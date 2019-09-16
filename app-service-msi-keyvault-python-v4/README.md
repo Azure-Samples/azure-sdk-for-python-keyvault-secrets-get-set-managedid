@@ -81,7 +81,7 @@ and grant it the same access.
 2.  Install the dependencies using pip.
 
     ```
-    cd app-service-msi-keyvault-python-v4
+    cd app-service-msi-keyvault-python-v3
     pip install -r requirements.txt
     ```
 
