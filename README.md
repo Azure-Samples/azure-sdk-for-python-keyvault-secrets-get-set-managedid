@@ -18,7 +18,7 @@ With [Managed Service Identity (MSI)](https://docs.microsoft.com/en-us/azure/app
 ## Folders introduction
 Two folders are referred to different version of Azure SDK.
 * app-service-msi-keyvault-python-v3 referenced to following packages:
-  * [azure-keyvault]
+  * [azure-keyvault](https://pypi.org/project/azure-keyvault/)
 * app-service-msi-keyvault-python-v4 referenced to following packages:
-  * [azure-keyvault-secrets]
-  * [azure-identity]
+  * [azure-keyvault-secrets](https://pypi.org/project/azure-keyvault-secrets/4.0.0b2/)
+  * [azure-identity](https://pypi.org/project/azure-identity/1.0.0b2/)
