@@ -17,8 +17,8 @@ With [Managed Service Identity (MSI)](https://docs.microsoft.com/en-us/azure/app
 
 ## Folders introduction
 Two folders are referred to different version of Azure SDK.
-* key-vault-node-quickstart-v3 referenced to following packages:
+* app-service-msi-keyvault-python-v3 referenced to following packages:
   * [azure-keyvault]
-* key-vault-node-quickstart-v4 referenced to following packages:
+* app-service-msi-keyvault-python-v4 referenced to following packages:
   * [azure-keyvault-secrets]
   * [azure-identity]
