@@ -58,7 +58,7 @@ and grant it the same access.
 
 1.  If you don't already have it, [install Python](https://www.python.org/downloads/).
 
-    This sample (and the SDK) is compatible with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
+    This sample (and the SDK) is compatible with Python 2.7 and 3.5+
 
 2.  We recommend that you use a [virtual environment](https://docs.python.org/3/tutorial/venv.html)
     to run this example, but it's not required.
@@ -85,7 +85,7 @@ and grant it the same access.
     pip install -r requirements.txt
     ```
 
-3.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL of replace the variable in the example file.
+3.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL or replace the variable in the example file.
 
 1. Export these environment variables into your current shell or update the credentials in the example file.
 
