@@ -1,4 +1,3 @@
-from msrestazure.azure_active_directory import MSIAuthentication, ServicePrincipalCredentials
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 
