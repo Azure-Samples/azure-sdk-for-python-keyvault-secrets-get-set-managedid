@@ -24,10 +24,8 @@ def run_example():
         credentials
     )
 
-    secret = secret_client.get_secret(
-        "secret",    # Name of your secret. If you followed the README 'secret' should exists
-        ""           # The version of the secret. Empty string for latest
-    )
+    secret = secret_client.get_secret("secret")    # Name of your secret. If you followed the README 'secret' should exists
+ 
     return "My secret value is {}".format(secret.value)
 
 
