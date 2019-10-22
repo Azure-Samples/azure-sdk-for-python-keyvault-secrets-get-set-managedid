@@ -120,26 +120,6 @@ D:\home\python362x86\python.exe -m pip install -r D:\home\site\wwwroot\requireme
 
 3. This repo is ready to be deployed using local git. Read this tutorial to get more information on [how to push using local git with CLI 2.0](https://docs.microsoft.com/azure/app-service/app-service-web-get-started-python#push-to-azure-from-git)
 
-## At a glance
-
-A default credential capable of handling most Azure SDK authentication scenarios.When environment variable configuration is present, it authenticates as a service principal. Then, the code is simply:
-
-```python    
-    credentials = DefaultAzureCredential()
-    key_vault_client = KeyVaultClient(
-        credentials
-    )
-
-    key_vault_uri = os.environ.get("KEY_VAULT_URI")
-    secret_client = SecretClient(
-        key_vault_uri,  # Your KeyVault URL
-        credentials
-    )
-    secret = secret_client.get_secret(
-        "secret",    # Name of your secret. If you followed the README 'secret' should exists
-        ""           # The version of the secret. Empty string for latest
-    )
-```
 
 ## Summary
 
