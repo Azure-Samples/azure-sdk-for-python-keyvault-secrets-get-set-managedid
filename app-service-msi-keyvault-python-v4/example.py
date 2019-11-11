@@ -7,16 +7,13 @@ from flask import Flask
 app = Flask(__name__)
 
 
-KEY_VAULT_URI = None  # Replace by something like "https://xxxxxxxxx.vault.azure.net/"
-
-
 def run_example():
     """MSI Authentication example."""
 
     # Get credentials
     credentials = DefaultAzureCredential()
 
-    key_vault_uri = os.environ.get("KEY_VAULT_URI", KEY_VAULT_URI)
+    key_vault_uri = os.environ.get("KEY_VAULT_URI")
     
     # Create a secret client
     secret_client = SecretClient(

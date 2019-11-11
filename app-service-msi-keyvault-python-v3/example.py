@@ -6,9 +6,6 @@ from flask import Flask
 app = Flask(__name__)
 
 
-KEY_VAULT_URI = None  # Replace by something like "https://xxxxxxxxx.vault.azure.net/"
-
-
 def get_key_vault_credentials():
     """This tries to get a token using MSI, or fallback to SP env variables.
     """
@@ -36,7 +33,7 @@ def run_example():
         credentials
     )
 
-    key_vault_uri = os.environ.get("KEY_VAULT_URI", KEY_VAULT_URI)
+    key_vault_uri = os.environ.get("KEY_VAULT_URI")
 
     secret = key_vault_client.get_secret(
         key_vault_uri,  # Your KeyVault URL
