@@ -1,95 +1,83 @@
 ---
 services: app-service, key-vault
-languages: python
-products: azure
+platforms: python
+author: lmazuel
 ---
+# Use Key Vault from App Service with Managed Service Identity and Python
 
-# Quickstart: Use Key Vault from App Service with Managed Service Identity and Python
+## Background
+For service to service authentication, the approach involved creating an Azure AD application and associated credential, and using that credential to get a token. While this approach works well, there are two shortcomings:
+1. The Azure AD application credentials are typically hard coded in source code. Developers tend to push the code to source repositories as-is, which leads to credentials in source.
+2. The Azure AD application credentials expire, and so need to be renewed, which can lead to application downtime.
 
-This Quickstart shows how to store a secret in Key Vault and how to retrieve it using a Web app. This web app may be run locally or in Azure. The Quickstart uses Node.js and Managed Service Identities (MSIs)
+With [Managed Service Identity (MSI)](https://docs.microsoft.com/en-us/azure/app-service/app-service-managed-service-identity), both these problems are solved. This sample shows how a Web App can authenticate to Azure Key Vault without the need to explicitly create an Azure AD application or manage its credentials. 
 
-> * Create a Key Vault.
-> * Store a secret in Key Vault.
-> * Retrieve a secret from Key Vault.
-> * Create an Azure Web Application.
-> * [Enable Managed Service Identities](https://docs.microsoft.com/azure/active-directory/managed-service-identity/overview).
-> * Grant the required permissions for the web application to read data from Key vault.
-
-Before you proceed make sure that you are familiar with the [basic concepts](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-overview).
+>Here's another sample that demonstrates using a Managed Service Identity (MSI) from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
 
 ## Prerequisites
+To run and deploy this sample, you need the following:
+1. An Azure subscription to create an App Service and a Key Vault. 
+2. [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) to run the application on your local development machine.
 
-* [Node.js](https://nodejs.org)
-* [Git](https://www.git-scm.com/)
-* [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) 2.0.4 or later
-* An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/free/?WT.mc_id=A261C142F) before you begin.
+### Step 1: Create an App Service with a Managed Service Identity (MSI)
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fapp-service-msi-keyvault-python%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
 
-## Log in to Azure
+Use the "Deploy to Azure" button to deploy an ARM template to create the following resources:
+1. App Service with MSI.
+2. Key Vault with a secret, and an access policy that grants the App Service access to **Get Secrets**.
+>Note: When filling out the template you will see a textbox labeled 'Key Vault Secret'. Enter a secret value there. A secret with the name 'secret' and value from what you entered will be created in the Key Vault.
 
-1. Open a command prompt, i.e. cmd, terminal, etc
-2. Execute the following command to log in to Azure
-`az login`
+Review the resources created using the Azure portal. You should see an App Service and a Key Vault. View the access policies of the Key Vault to see that the App Service has access to it. 
 
-```azurecli
-az login
-```
+**IMPORTANT NOTE:**
 
-## Create Resource Group
+>You CANNOT use the default Python version shipped with Azure WebApp to execute Azure SDK for Python code. You must install a WebApp extension for Python.
+ This tutorial explains [how to update Python using an extension on Azure WebApp](https://docs.microsoft.com/visualstudio/python/managing-python-on-azure-app-service).
+ The sample here works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
 
-Create a Resource Group with the [az group create](https://docs.microsoft.com/en-us/azure/azure-resource-manager/manage-resources-cli) command. An Azure Resource Group is a logical container into which Azure resources are deployed and managed.
+### Step 2: Grant yourself data plane access to the Key Vault
+Using the Azure Portal, go to the Key Vault's access policies, and grant yourself **Secret Management** access to the Key Vault. This will allow you to run the application on your local development machine. 
 
-When you create a Resource Group you have give it a unique custom name. Please think of a custom name for your resource group and replace the text below "YourResourceGroupName" with the custom name you created.
+1.	Search for your Key Vault in “Search Resources dialog box” in Azure Portal.
+2.	Select "Overview", and click on Access policies
+3.	Click on "Add New", select "Secret Management" from the dropdown for "Configure from template"
+4.	Click on "Select Principal", add your account 
+5.	Save the Access Policies
 
-The following example creates a resource group named *<YourResourceGroupName>* in the *eastus* location.
+You can also create an Azure service principal either through
+[Azure CLI](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal-cli/),
+[PowerShell](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal/)
+or [the portal](https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/)
+and grant it the same access.
 
-```azurecli
-# To list locations: az account list-locations --output table
-az group create --name "<YourResourceGroupName>" --location eastus
-```
 
-The Resource Group you just created is used throughout this tutorial.
+## Local dev installation
 
-## Create an Azure Key Vault
+1.  If you don't already have it, [install Python](https://www.python.org/downloads/).
 
-Next you will create a Key Vault using the resource group created in the previous step. Although "ContosoKeyVault" is used as the name for the Key Vault throughout this article, you have to use a unique name. Provide the following information:
+    This sample (and the SDK) is compatible with Python 2.7 and 3.5+.
 
-* Vault name - Create a custom name and replace YourKeyVaultName below.
-* Resource group name - Use the same Resource Group Name you used above.
-* The location - Use the same location that you created the Resource Group in above.
+2.  We recommend that you use a [virtual environment](https://docs.python.org/3/tutorial/venv.html)
+    to run this example, but it's not required.
+    Install and initialize the virtual environment with the "venv" module on Python 3 (you must install [virtualenv](https://pypi.python.org/pypi/virtualenv) for Python 2.7):
 
-```azurecli
-az keyvault create --name "<YourKeyVaultName>" --resource-group "<YourResourceGroupName>" --location "East US"
-```
+    ```
+    python -m venv mytestenv # Might be "python3" or "py -3.6" depending on your Python installation
+    cd mytestenv
+    source bin/activate      # Linux shell (Bash, ZSH, etc.) only
+    ./scripts/activate       # PowerShell only
+    ./scripts/activate.bat   # Windows CMD only
+    ```
 
-## Add a secret to Key Vault
+3.  Clone the repository.
 
-We're adding a secret to help illustrate how secret value works.You could store a SQL connection string or any other information that you need to keep secure and make it available to your application. 
+    ```
+    git clone https://github.com/Azure-Samples/app-service-msi-keyvault-python.git
+    ```
 
-In this tutorial, the password will be called **AppSecret** and will store the value of **MySecret** in it:
-
-```azurecli
-az keyvault secret set --vault-name "<YourKeyVaultName>" --name "AppSecret" --value "MySecret"
-```
-
-To view the value contained in the secret as plain text:
-
-```azurecli
-az keyvault secret show --name "AppSecret" --vault-name "<YourKeyVaultName>"
-```
-
-This command shows the secret information including the URI. After completing these steps, you should have a URI to a secret in an Azure Key Vault. Copy the output from the previous command to Notepad. You need it in a later step.
-
-## Set credentials in environment variables
-Set the `KEY_VAULT_URL` environment variable using the "Application Settings" of your WebApp.
-
-## Clone the repo
-Run the following command to clone this Quickstart code to your local machine:
-```
-git clone https://github.com/Azure-Samples/app-service-msi-keyvault-python.git
-```
-## Install dependencies
-
-Run the following command to install dependencies for "SDK version 3.0" and "SDK version 4.0":
+4.  Run the following command to install dependencies for "SDK version 3.0" and "SDK version 4.0":
 
 - SDK version 4.0
 
@@ -104,142 +92,71 @@ pip install -r requirements.txt
 cd app-service-msi-keyvault-python-v3 
 pip install -r requirements.txt
 ```
-## Publish the web application to Azure
 
-Below are the few steps we need to do
+5.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL or replace the variable in the example file.
 
-1. Azure App Service
-
-- The first step is to create an [Azure App Service](https://azure.microsoft.com/services/app-service/) Plan. You can store multiple web apps in this plan. Use the resource group that you created earlier in the following command:
+6. Export these environment variables into your current shell or update the credentials in the example file.
 
     ```
-    az appservice plan create --name <myAppServicePlan> --resource-group <myResourceGroup>
+    export AZURE_TENANT_ID={your tenant id}
+    export AZURE_CLIENT_ID={your client id}
+    export AZURE_CLIENT_SECRET={your client secret}
     ```
 
-2. Azure Web App
-
-- Next we create a web app. In the following example, replace <AppName> with a globally unique app name (valid characters are a-z, 0-9, and -). The runtime is set to NODE|6.9. To see all supported runtimes, run az webapp list-runtimes
-    ```
-    # Bash
-    az webapp create --resource-group <myResourceGroup> --plan <myAppServicePlan> --name <AppName> --runtime "NODE|6.9" --deployment-local-git
-    # PowerShell
-    az webapp create --resource-group <myResourceGroup> --plan <myAppServicePlan> --name <AppName> --runtime "NODE|6.9"
-    ```
-    After the web app is created, Azure CLI outputs something similar to the following:
-    ```
-    {
-      "availabilityState": "Normal",
-      "clientAffinityEnabled": true,
-      "clientCertEnabled": false,
-      "cloningInfo": null,
-      "containerSize": 0,
-      "dailyMemoryTimeQuota": 0,
-      "defaultHostName": "<AppName>.azurewebsites.net",
-      "enabled": true,
-      "deploymentLocalGitUrl": "https://<username>@<AppName>.scm.azurewebsites.net/<AppName>.git"
-      < JSON data removed for brevity. >
-    }
-    ```
-    Browse to your newly created web app, and you should see a functioning web app. Replace <AppName> with the unique app name that you chose previously.
+7. Run the sample.
 
     ```
-    http://<app name>.azurewebsites.net
-    ```
-    The above command also creates a Git-enabled app which allows you to deploy to Azure from your local git. 
-    Local Git repository is configured with this url: 'https://<username>@<AppName>.scm.azurewebsites.net/<AppName>.git'
-
-3. Deployment User
-
-- Create a deployment user
-
-    After running the previous command, you can add an Azure Remote to your local Git repository. Replace <url> with the URL of the Git Remote that you got from [enabling Git for your app](https://docs.microsoft.com/en-us/azure/app-service/deploy-local-git).
-
-    ```
-    git remote add azure <url>
+    python example.py
     ```
 
-### Configuring your Key Vault
+8. This sample exposes two endpoints:
+  
+   - `/ping` : This just answers "hello world" and is a good way to test if your packages are installed correctly without testing Azure itself.
+   - `/` : The MSI sample itself
 
-Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
+## Deploying on Azure Web App
 
-- Create a service principal and configure its access to Azure resources:
-  ```Bash
-  az ad sp create-for-rbac -n <your-application-name> --skip-assignment
-  ```
-  Output:
-  ```json
-  {
-    "appId": "generated-app-ID",
-    "displayName": "your-application-name",
-    "name": "http://your-application-name",
-    "password": "random-password",
-    "tenant": "tenant-ID"
-  }
-  ```
-- Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables. The following example shows a way to do this in Bash:
+1. Set the `KEY_VAULT_URL` environment variable using the "Application Settings" of your WebApp.
 
-  ```Bash
-    export AZURE_CLIENT_ID="generated-app-ID"
-    export AZURE_CLIENT_SECRET="random-password"
-    export AZURE_TENANT_ID="tenant-ID"
-  ```
+1. Connect to the [Kudu console](https://github.com/projectkudu/kudu/wiki/Kudu-console) and install the dependencies. If you installed the Python 3.6.2x86 extension, the command line will be:
 
-- Grant the above mentioned application authorization to perform secret operations on the Key Vault:
-
-  ```Bash
-  az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --secret-permissions backup delete get list set
-  ```
-
-  > --secret-permissions:
-  > Accepted values: backup, delete, get, list, purge, recover, restore, set
-
-- Use the above mentioned Key Vault name to retrieve details of your Vault which also contains your Key Vault URL:
-  ```Bash
-  az keyvault show --name <your-key-vault-name>
-  ```
-
-## Enable Managed Service Identity
-
-Azure Key Vault provides a way to securely store credentials and other keys and secrets, but your code needs to authenticate with Key Vault to retrieve them. Managed Service Identity (MSI) simplifies this need by giving Azure services an automatically managed identity in Azure Active Directory (Azure AD). You can use this identity to authenticate to any service that supports Azure AD authentication, including Key Vault, without having to store any credentials in your code.
-
-Run the "identity assign" command to create an identity for this application, this command is the equivalent of going to the portal and switching **Managed Service Identity** to **On** in the web application properties:
-
-```azurecli
-az webapp identity assign --name <AppName> --resource-group "<YourResourceGroupName>"
+```shell
+D:\home\python362x86\python.exe -m pip install -r D:\home\site\wwwroot\requirements.txt
 ```
 
-### Assign permissions to your application to read secrets from Key Vault
+> For automation purpose, you might use the [Kudu RestAPI](https://github.com/projectkudu/kudu/wiki/REST-API#command)
 
-Copy the out to Notepad for later use. It should be in the following format:
-        
-        {
-          "principalId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-          "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-          "type": "SystemAssigned"
-        }
-        
-Then, run this command using the name of your Key Vault and the value of PrincipalId copied from above:
+3. This repo is ready to be deployed using local git. Read this tutorial to get more information on [how to push using local git with CLI 2.0](https://docs.microsoft.com/azure/app-service/app-service-web-get-started-python#push-to-azure-from-git)
 
-```azurecli
-az keyvault set-policy --name '<YourKeyVaultName>' --object-id <PrincipalId> --secret-permissions get
-```
+## Summary
 
-## Deploy the Node App to Azure and retrieve the secret value
+The web app was successfully able to get a secret at runtime from Azure Key Vault using your developer account during development, and using MSI when deployed to Azure, without any code change between local development environment and Azure. 
+As a result, you did not have to explicitly handle a service principal credential to authenticate to Azure AD to get a token to call Key Vault. You do not have to worry about renewing the service principal credential either, since MSI takes care of that.
 
-Now that everything is deployed, run the following command to deploy the app to Azure. This will push your local master branch to the git remote called 'azure' that you created earlier:
+## Troubleshooting
 
-```
-git push azure master
-```
+### Common issues when deployed to Azure App Service:
 
-When the git push command has completed you can now navigate to https://<AppName>.azurewebsites.net to see the secret value.
+1. I see "The page cannot be displayed because an internal server error has occurred.", even on the "ping" endpoint
 
-Make sure that you replaced the name <AppName> with your vault name.
+Make sure you have installed a Python extension for WebApp (see Step 1). If not, this tutorial explains [how to update Python using an extension on Azure WebApp](https://docs.microsoft.com/visualstudio/python/managing-python-on-azure-app-service).
+ The sample here works directly if you install the extension "Python 3.6.2 x86". Edit the `web.config` file if you wish to use another version of Python.
 
-# Azure SDK versions
+1. MSI is not setup on the App Service. 
+
+Check the environment variables MSI_ENDPOINT and MSI_SECRET exist using [Kudu debug console](https://azure.microsoft.com/en-us/resources/videos/super-secret-kudu-debug-console-for-azure-web-sites/). If these environment variables do not exist, MSI is not enabled on the App Service. Note that after enabling MSI, you need to restart your WebApp.
+
+### Common issues across environments:
+
+1. Access denied
+
+The principal used does not have access to the Key Vault. The principal used in show on the web page. Grant that user (in case of developer context) or application "Get secret" access to the Key Vault. 
+
+## Folders Introduction
 
 You will find the following folders: app-service-msi-keyvault-python-v3, which references the version 3.0 SDK and app-service-msi-keyvault-python-v4, which uses the version 4.0 SDK.
   
-# Contributing
+## Contributing
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
