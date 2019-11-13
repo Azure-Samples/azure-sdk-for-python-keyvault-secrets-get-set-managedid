@@ -116,7 +116,7 @@ pip install -r requirements.txt
 
 ## Deploying on Azure Web App
 
-1. Set the `KEY_VAULT_URL` environment variable using the "Application Settings" of your WebApp.
+1. Set the `KEY_VAULT_URL` environment variable using the "Application Settings" of your Web App.
 
 1. Connect to the [Kudu console](https://github.com/projectkudu/kudu/wiki/Kudu-console) and install the dependencies. If you installed the Python 3.6.2x86 extension, the command line will be:
 
