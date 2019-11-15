@@ -5,6 +5,9 @@ author: lmazuel
 ---
 # Use Key Vault from App Service with Managed Service Identity and Python
 
+## SDK Versions
+You will find the following folders: app-service-msi-keyvault-python-v3, which references the version 3.0 SDK and app-service-msi-keyvault-python-v4, which uses the version 4.0 SDK.
+
 ## Background
 For service to service authentication, the approach involved creating an Azure AD application and associated credential, and using that credential to get a token. While this approach works well, there are two shortcomings:
 1. The Azure AD application credentials are typically hard coded in source code. Developers tend to push the code to source repositories as-is, which leads to credentials in source.
@@ -151,10 +154,6 @@ Check the environment variables MSI_ENDPOINT and MSI_SECRET exist using [Kudu de
 1. Access denied
 
 The principal used does not have access to the Key Vault. The principal used in show on the web page. Grant that user (in case of developer context) or application "Get secret" access to the Key Vault. 
-
-## Folders Introduction
-
-You will find the following folders: app-service-msi-keyvault-python-v3, which references the version 3.0 SDK and app-service-msi-keyvault-python-v4, which uses the version 4.0 SDK.
   
 ## Contributing
 
