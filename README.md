@@ -21,7 +21,7 @@ For service to service authentication, the approach involved creating an Azure A
 
 With [Azure Managed Identities](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/), both these problems are solved. This sample shows how a Web App can authenticate to Azure Key Vault without the need to explicitly create an Azure AD application or manage its credentials. 
 
->Here's another sample that demonstrates using an Azure Managed Identity from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
+>Here's another sample that demonstrates using an Azure Managed Identities from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
 
 ## Prerequisites
 To run and deploy this sample, you need the following:
