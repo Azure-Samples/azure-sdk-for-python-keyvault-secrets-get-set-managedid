@@ -1,34 +1,40 @@
 ---
-services: app-service, key-vault
-platforms: python
-author: lmazuel
+page_type: sample
+languages: python
+products: 
+- app-service
+- azure-key-vault
 ---
-# Use Key Vault from App Service with Managed Service Identity and Python
+# Use Key Vault from App Service with Azure Managed Identity and Python
 
 ## SDK Versions
-You will find the following folders: app-service-msi-keyvault-python-v3, which references the version 3.0 SDK and app-service-msi-keyvault-python-v4, which uses the version 4.0 SDK.
+In this sample, you will find the following folders:
+
+   app-service-msi-keyvault-python-v3 - references Key Vault SDK v3.0
+
+   app-service-msi-keyvault-python-v4 - references Key Vault SDK v4.0
 
 ## Background
 For service to service authentication, the approach involved creating an Azure AD application and associated credential, and using that credential to get a token. While this approach works well, there are two shortcomings:
 1. The Azure AD application credentials are typically hard coded in source code. Developers tend to push the code to source repositories as-is, which leads to credentials in source.
-2. The Azure AD application credentials expire, and so need to be renewed, which can lead to application downtime.
+2. The Azure AD application credentials expire, and so need to be renewed, else can lead to application downtime.
 
-With [Managed Service Identity (MSI)](https://docs.microsoft.com/en-us/azure/app-service/app-service-managed-service-identity), both these problems are solved. This sample shows how a Web App can authenticate to Azure Key Vault without the need to explicitly create an Azure AD application or manage its credentials. 
+With [Azure Managed Identities](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/), both these problems are solved. This sample shows how a Web App can authenticate to Azure Key Vault without the need to explicitly create an Azure AD application or manage its credentials. 
 
->Here's another sample that demonstrates using a Managed Service Identity (MSI) from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
+>Here's another sample that demonstrates using an Azure Managed Identity from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
 
 ## Prerequisites
 To run and deploy this sample, you need the following:
 1. An Azure subscription to create an App Service and a Key Vault. 
 2. [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) to run the application on your local development machine.
 
-### Step 1: Create an App Service with a Managed Service Identity (MSI)
+### Step 1: Create an App Service with an Azure Managed Identity
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fapp-service-msi-keyvault-python%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
 Use the "Deploy to Azure" button to deploy an ARM template to create the following resources:
-1. App Service with MSI.
+1. App Service with Azure Managed Identity.
 2. Key Vault with a secret, and an access policy that grants the App Service access to **Get Secrets**.
 >Note: When filling out the template you will see a textbox labeled 'Key Vault Secret'. Enter a secret value there. A secret with the name 'secret' and value from what you entered will be created in the Key Vault.
 
@@ -77,7 +83,7 @@ and grant it the same access.
 3.  Clone the repository.
 
     ```
-    git clone https://github.com/Azure-Samples/app-service-msi-keyvault-python.git
+    git clone https://github.com/Azure-Samples/app-service-azmanagedid-keyvault-python.git
     ```
 
 4.  Run the following command to install dependencies for "SDK version 3.0" and "SDK version 4.0":
