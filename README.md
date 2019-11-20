@@ -5,7 +5,7 @@ products:
 - app-service
 - key-vault
 ---
-# Use Key Vault from App Service with Managed Service Identity and Python
+# Use Key Vault from App Service with Azure Managed Identity and Python
 
 ## SDK Versions
 In this sample, you will find the following folders:
