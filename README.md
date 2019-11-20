@@ -3,7 +3,7 @@ page_type: sample
 languages: python
 products: 
 - app-service
-- key-vault
+- azure-key-vault
 ---
 # Use Key Vault from App Service with Azure Managed Identity and Python
 
