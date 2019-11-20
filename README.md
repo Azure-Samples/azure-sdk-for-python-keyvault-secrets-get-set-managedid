@@ -6,8 +6,8 @@ author: lmazuel
 # Use Key Vault from App Service with Managed Service Identity and Python
 
 ## SDK Versions
-In this sample, you will find the following folders:
-key-vault-node-quickstart-v3 - references Key Vault SDK v3.0
+In this sample, you will find the following folders:\n
+key-vault-node-quickstart-v3 - references Key Vault SDK v3.0\n
 keyvault-node-quickstart-v4 - references Key Vault SDK v4.0
 
 ## Background
