@@ -21,7 +21,7 @@ For service to service authentication, the approach involved creating an Azure A
 
 With [Azure Managed Identities](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/), both these problems are solved. This sample shows how a Web App can authenticate to Azure Key Vault without the need to explicitly create an Azure AD application or manage its credentials. 
 
->Here's another sample that demonstrates using an Azure Managed Identities from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
+>Here's another sample that demonstrates using an [Azure Managed Identities](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/) from within an Azure VM. - [https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi](https://github.com/Azure-Samples/resource-manager-python-manage-resources-with-msi)
 
 ## Prerequisites
 To run and deploy this sample, you need the following:
@@ -34,7 +34,7 @@ To run and deploy this sample, you need the following:
 </a>
 
 Use the "Deploy to Azure" button to deploy an ARM template to create the following resources:
-1. App Service with Azure Managed Identity.
+1. App Service with [Azure Managed Identities](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/).
 2. Key Vault with a secret, and an access policy that grants the App Service access to **Get Secrets**.
 >Note: When filling out the template you will see a textbox labeled 'Key Vault Secret'. Enter a secret value there. A secret with the name 'secret' and value from what you entered will be created in the Key Vault.
 
