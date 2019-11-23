@@ -1,10 +1,14 @@
 ---
 page_type: sample
-languages: python
+languages:
+- python
 products: 
-- app-service
+- azure-app-service
 - azure-key-vault
+description: "A demo that shows how to use Azure KeyVault from Python."
+urlFragment: use-key-vault-from-app-service
 ---
+
 # Use Key Vault from App Service with Azure Managed Identity and Python
 
 ## SDK Versions
@@ -153,7 +157,7 @@ Make sure you have installed a Python extension for WebApp (see Step 1). If not,
 
 1. MSI is not setup on the App Service. 
 
-Check the environment variables MSI_ENDPOINT and MSI_SECRET exist using [Kudu debug console](https://azure.microsoft.com/en-us/resources/videos/super-secret-kudu-debug-console-for-azure-web-sites/). If these environment variables do not exist, MSI is not enabled on the App Service. Note that after enabling MSI, you need to restart your WebApp.
+Check the environment variables MSI_ENDPOINT and MSI_SECRET exist using [Kudu debug console](https://azure.microsoft.com/resources/videos/super-secret-kudu-debug-console-for-azure-web-sites/). If these environment variables do not exist, MSI is not enabled on the App Service. Note that after enabling MSI, you need to restart your WebApp.
 
 ### Common issues across environments:
 
