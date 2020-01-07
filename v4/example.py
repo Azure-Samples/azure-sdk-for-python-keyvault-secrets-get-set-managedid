@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 
 def run_example():
-    """MSI Authentication example."""
+    """Azure Managed Identities Authentication example."""
 
     # Get credentials
     credentials = DefaultAzureCredential()
