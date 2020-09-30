@@ -1,2 +1,0 @@
-azure-keyvault>=0.3.6
-flask

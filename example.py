@@ -1,3 +1,4 @@
+# This file uses an outdated library.  Please see the readme to find the latest version.
 from msrestazure.azure_active_directory import MSIAuthentication, ServicePrincipalCredentials
 from azure.keyvault import KeyVaultClient
 import os
@@ -6,6 +7,7 @@ from flask import Flask
 app = Flask(__name__)
 
 
+# Deprecated Libraries
 def get_key_vault_credentials():
     """This tries to get a token using MSI, or fallback to SP env variables.
     """
@@ -28,13 +30,16 @@ def run_example():
     # Get credentials
     credentials = get_key_vault_credentials()
 
+    # Deprecated Libraries
     # Create a KeyVault client
     key_vault_client = KeyVaultClient(
         credentials
     )
 
+    # Deprecated Libraries
     key_vault_uri = os.environ.get("KEY_VAULT_URI")
 
+    # Deprecated Libraries
     secret = key_vault_client.get_secret(
         key_vault_uri,  # Your KeyVault URL
         "secret",       # Name of your secret. If you followed the README 'secret' should exists

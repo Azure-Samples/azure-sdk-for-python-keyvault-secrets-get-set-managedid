@@ -11,10 +11,22 @@ urlFragment: get-set-keyvault-secrets-managed-id-python
 
 # How to set and get secrets from Azure Key Vault with Azure Managed Identities and Python
 
-## SDK Versions
-In this sample, you will find the following folders:
-* **v3** - references Key Vault SDK v3
-* **v4** - references Key Vault SDK v4
+## This sample shows how to do the following operations of Key Vault secret with Key Vault SDK
+- Get Key Vault MSIAuthentication or ServicePrincipalCredentials
+- Create a Key Vault client
+- Get an existing secret
+
+## Use latest Key Vault SDK
+The Key Vault SDK package version in this repo is **0.3.x**. It's strongly recommended that you use the [latest](https://pypi.org/project/azure-keyvault-secrets/) version of the Key Vault secret SDK package, please refer to the following examples:
+
+ * [helloworld.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/hello_world.py) - Examples for common Key Vault secret tasks:
+
+   * Get DefaultAzureCredential
+   * Create a secret client
+   * Create a new secret
+   * Get an existing secret
+   * Update an existing secret
+   * Delete a secret
 
 ## Background
 For service to service authentication, the approach involved creating an Azure AD application and associated credential, and using that credential to get a token. While this approach works well, there are two shortcomings:
@@ -31,14 +43,14 @@ To run and deploy this sample, you need the following:
 2. [Azure CLI 2.0] to run the application on your local development machine.
 
 ### Step 1: Create an App Service with an Azure Managed Identity
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fapp-service-msi-keyvault-python%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazure-sdk-for-python-keyvault-secrets-get-set-managedid%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
 Use the "Deploy to Azure" button to deploy an ARM template to create the following resources:
 1. App Service with [Azure Managed Identities].
 2. Key Vault with a secret, and an access policy that grants the App Service access to **Get Secrets**.
->Note: When filling out the template you will see a textbox labeled 'Key Vault Secret'. Enter a secret value there. A secret with the name 'secret' and value from what you entered will be created in the Key Vault.
+>Note: When preparing the deployment, there will be a few required fields to fill out (subscription, resource group, region, website name, Key Vault name, and secret value). The secret value will be the value of the secret named "secret" created in the Key Vault upon deployment.
 
 Review the resources created using the Azure portal. You should see an App Service and a Key Vault. View the access policies of the Key Vault to see that the App Service has access to it. 
 
@@ -53,7 +65,7 @@ Using the Azure Portal, go to the Key Vault's access policies, and grant yoursel
 
 1.	Search for your Key Vault in “Search Resources dialog box” in Azure Portal.
 2.	Select "Overview", and click on Access policies
-3.	Click on "Add New", select "Secret Management" from the dropdown for "Configure from template"
+3.	Click on "Add Access Policy", select "Secret Management" from the dropdown for "Configure from template"
 4.	Click on "Select Principal", add your account 
 5.	Save the Access Policies
 
@@ -83,25 +95,20 @@ You can also create an Azure service principal either through
 
     ```
     git clone https://github.com/Azure-Samples/azure-sdk-for-python-keyvault-secrets-get-set-managedid.git
+    cd azure-sdk-for-python-keyvault-secrets-get-set-managedid
     ```
 
-4.  Run the following command to install dependencies for "SDK version 3" and "SDK version 4":
+4.  Run the following command to install dependencies:
 
-- SDK version 4
 
-```
-cd v4
-pip install -r requirements.txt
-```
+    ```
+    pip install -r requirements.txt
+    ```
 
-- SDK version 3
-
-```
-cd v3
-pip install -r requirements.txt
-```
-
-5.  Set up the environment variable `KEY_VAULT_URL` with your KeyVault URL or replace the variable in the example file.
+5.  Set up the environment variable `KEY_VAULT_URI` with your KeyVault URI or replace the variable in the example file.
+    ```
+    SET KEY_VAULT_URI=https://{your vault name}.vault.azure.net/  # setting environment variable in Windows command prompt
+    ```
 
 6. Export these environment variables into your current shell or update the credentials in the example file.
 
@@ -124,7 +131,7 @@ pip install -r requirements.txt
 
 ## Deploying on Azure Web App
 
-1. Set the `KEY_VAULT_URL` environment variable using the "Application Settings" of your Web App.
+1. Set the `KEY_VAULT_URI` environment variable using the "Application Settings" of your Web App.
 
 1. Connect to the [Kudu console] and install the dependencies. If you installed the Python 3.6.2x86 extension, the command line will be:
 
